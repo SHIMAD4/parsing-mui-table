@@ -1,4 +1,3 @@
-import React from 'react';
 import jsonData from '@/shared/lib/data/mock-data.json'
 import { MainComponent } from "@/features";
 

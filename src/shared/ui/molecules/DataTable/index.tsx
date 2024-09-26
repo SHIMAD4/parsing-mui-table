@@ -29,7 +29,7 @@ export const DataTable: FC<DataTableProps> = ({ filteredData }) => {
                         filteredData.map((row, index) => <MemoizedTableRow key={index} row={row} />)
                     ) : (
                         <TableRow>
-                            <TableHeadCell colSpan={9} align="center">
+                            <TableHeadCell>
                                 Нет данных
                             </TableHeadCell>
                         </TableRow>
