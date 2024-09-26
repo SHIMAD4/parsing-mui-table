@@ -1,4 +1,4 @@
-import React, { FC, ChangeEvent } from 'react';
+import { FC, ChangeEvent } from 'react';
 import { InputField, SelectField } from '@/shared/ui/atoms';
 import { SelectChangeEvent } from '@mui/material';
 

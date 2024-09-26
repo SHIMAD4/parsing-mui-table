@@ -1,10 +1,15 @@
-import React, { FC, useMemo, useState, useCallback, ChangeEvent } from 'react';
+import { FC, useMemo, useState, useCallback, ChangeEvent } from 'react';
 import { FiltersForm } from '@/shared/ui/molecules';
 import { DataTable } from '@/shared/ui/molecules';
 import { SelectChangeEvent } from '@mui/material';
 import _ from 'lodash'
+import {TableRowData} from "@/shared/lib/types";
 
-export const MainComponent: FC = ({ jsonData }) => {
+type MainCompProps = {
+    jsonData: TableRowData[]
+}
+
+export const MainComponent: FC<MainCompProps> = ({ jsonData }) => {
     const [filter, setFilter] = useState({
         programName: '',
         fieldOfStudy: '',

@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import { FC } from 'react';
 import { Table, TableBody, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
 import { TableHeadCell, MemoizedTableRow } from '@/shared/ui/atoms';
 import { TableRowData} from "@/shared/lib/types";

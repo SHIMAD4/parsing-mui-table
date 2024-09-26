@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import { CSSProperties, FC } from 'react';
 import { FormControl, InputLabel, Select, MenuItem, SelectChangeEvent } from '@mui/material';
 
 interface SelectFieldProps {
@@ -6,7 +6,7 @@ interface SelectFieldProps {
     value: string;
     onChange: (event: SelectChangeEvent) => void;
     options: string[];
-    style?: React.CSSProperties;
+    style?: CSSProperties;
 }
 
 export const SelectField: FC<SelectFieldProps> = ({ label, value, onChange, options, style }) => {
