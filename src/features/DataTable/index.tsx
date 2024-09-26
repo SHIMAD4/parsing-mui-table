@@ -1,65 +1,95 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TextField } from '@mui/material';
+import React, { FC, useMemo, useState, useCallback, ChangeEvent } from 'react';
+import { FiltersForm } from '@/shared/ui/molecules';
+import { DataTable } from '@/shared/ui/molecules';
+import { SelectChangeEvent } from '@mui/material';
+import _ from 'lodash'
 
-type RowTypes = {
-    [key in string]: string;
-}
+export const MainComponent: FC = ({ jsonData }) => {
+    const [filter, setFilter] = useState({
+        programName: '',
+        fieldOfStudy: '',
+        groupCode: '',
+        activityField: '',
+        hours: '',
+        duration: '',
+        form: '',
+        document: '',
+        cost: ''
+    });
 
-export const DataTable = ({ jsonData }) => {
-    const [filter, setFilter] = useState('');
-    const [filteredData, setFilteredData] = useState(jsonData);
+    const handleInputChange = useCallback(
+        (key: keyof typeof filter) => (event: ChangeEvent<HTMLInputElement>) => {
+            setFilter((prev) => ({
+                ...prev,
+                [key]: event.target.value
+            }));
+        },
+        []
+    );
 
-    // Оптимизация фильтрации
-    const handleFilter = useCallback(() => {
-        setFilteredData(
-            jsonData.filter(item =>
-                Object.values(item).some(val =>
-                    val.toString().toLowerCase().includes(filter.toLowerCase())
-                )
+    const handleSelectChange = useCallback(
+        (key: keyof typeof filter) => (event: SelectChangeEvent) => {
+            setFilter((prev) => ({
+                ...prev,
+                [key]: event.target.value
+            }));
+        },
+        []
+    );
+
+    const uniqueGroupCodes: string[] = useMemo(
+        () => _.uniq(jsonData.map(item => item['Укрупненная группа специальностей'])),
+        [jsonData]
+    );
+    const uniqueDocuments: string[] = useMemo(
+        () => _.uniq(jsonData.map(item => item['Документ об окончании обучения'])),
+        [jsonData]
+    );
+
+    // Фильтрация данных
+    const filteredData = useMemo(() => {
+        return jsonData
+            .filter((item) =>
+                item['Полное наименование образовательной программы']
+                    .toLowerCase()
+                    .includes(filter.programName.toLowerCase())
             )
-        );
+            .filter((item) =>
+                item['Сфера профессиональной деятельности']
+                    .toLowerCase()
+                    .includes(filter.fieldOfStudy.toLowerCase())
+            )
+            .filter((item) =>
+                !filter.groupCode || item['Укрупненная группа специальностей'] === filter.groupCode
+            )
+            .filter((item) =>
+                item['Наименование области профессиональной деятельности']
+                    .toLowerCase()
+                    .includes(filter.activityField.toLowerCase())
+            )
+            .filter((item) =>
+                !filter.hours || parseInt(item['Количество часов']) >= parseInt(filter.hours)
+            )
+            .filter((item) =>
+                item['Срок обучения'].toLowerCase().includes(filter.duration.toLowerCase())
+            )
+            .filter((item) => !filter.form || item['Форма обучения'] === filter.form)
+            .filter((item) => !filter.document || item['Документ об окончании обучения'] === filter.document)
+            .filter((item) =>
+                !filter.cost || parseInt(item['Стоимость руб.'].replace(/\D/g, '')) >= parseInt(filter.cost)
+            );
     }, [filter, jsonData]);
-
-    // Эффект для фильтрации данных при изменении фильтра
-    useEffect(() => {
-        handleFilter();
-    }, [filter, handleFilter]);
-
-    // Оптимизация таблицы с React.memo
-    const MemoizedTable = useMemo(() => (
-        <TableContainer component={Paper}>
-            <Table>
-                <TableHead>
-                    <TableRow>
-                        {Object.keys(jsonData[0] || {}).map((key) => (
-                            <TableCell key={key}>{key}</TableCell>
-                        ))}
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {filteredData.map((row: RowTypes, index) => (
-                        <TableRow key={index}>
-                            {Object.values(row).map((value, idx) => (
-                                <TableCell key={idx}>{value}</TableCell>
-                            ))}
-                        </TableRow>
-                    ))}
-                </TableBody>
-            </Table>
-        </TableContainer>
-    ), [filteredData, jsonData]);
 
     return (
         <div>
-            <TextField
-                label="Фильтр"
-                variant="outlined"
-                value={filter}
-                onChange={(e) => setFilter(e.target.value)}
-                fullWidth
-                margin="normal"
+            <FiltersForm
+                filter={filter}
+                uniqueGroupCodes={uniqueGroupCodes}
+                uniqueDocuments={uniqueDocuments}
+                onInputChange={handleInputChange}
+                onSelectChange={handleSelectChange}
             />
-            {MemoizedTable}
+            <DataTable filteredData={filteredData} />
         </div>
     );
 };

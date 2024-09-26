@@ -1,14 +1,9 @@
 import React from 'react';
-import jsonData from '@/shared/data/mock-data.json'
-import {DataTable} from "@/features";
+import jsonData from '@/shared/lib/data/mock-data.json'
+import { MainComponent } from "@/features";
 
 function App() {
-  return (
-      <div>
-        <h1>Таблица с фильтрацией</h1>
-        <DataTable jsonData={jsonData} />
-      </div>
-  );
+  return <MainComponent jsonData={jsonData} />
 }
 
 export default App;
